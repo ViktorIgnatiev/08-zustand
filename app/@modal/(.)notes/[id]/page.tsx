@@ -17,8 +17,4 @@ export default async function ModalNotePage({
 }
 
 
-// return (
-//     <Modal onClose={() => window.history.back()}>
-//       <NotePreview id={id} />
-//     </Modal>
-//   );
+
