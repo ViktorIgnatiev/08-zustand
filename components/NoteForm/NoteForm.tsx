@@ -11,6 +11,78 @@ import type { NoteTag } from '@/types/note';
 export default function NoteForm() {
   const router = useRouter();
   const { draft, setDraft, clearDraft } = useNoteStore();
+  const [isMounted, setIsMounted] = useState(false);
+
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // Не рендеримо форму до монтування
+  if (!isMounted) {
+    return (
+      <form className={css.form}>
+        <h2 className={css.title}>Create New Note</h2>
+        {/* Пуста форма для SSR */}
+        <div className={css.formGroup}>
+          <label htmlFor="title" className={css.label}>Title</label>
+          <input
+            id="title"
+            name="title"
+            type="text"
+            className={css.input}
+            placeholder="Note title"
+            required
+            disabled
+          />
+        </div>
+        <div className={css.formGroup}>
+          <label htmlFor="content" className={css.label}>Content</label>
+          <textarea
+            id="content"
+            name="content"
+            className={css.textarea}
+            placeholder="Note content"
+            required
+            disabled
+            rows={6}
+          />
+        </div>
+        <div className={css.formGroup}>
+          <label htmlFor="tag" className={css.label}>Tag</label>
+          <select
+            id="tag"
+            name="tag"
+            className={css.select}
+            disabled
+          >
+            <option value="Personal">Personal</option>
+            <option value="Work">Work</option>
+            <option value="Todo">Todo</option>
+            <option value="Meeting">Meeting</option>
+            <option value="Shopping">Shopping</option>
+          </select>
+        </div>
+        <div className={css.buttonGroup}>
+          <button type="button" className={css.cancelButton} disabled>
+            Cancel
+          </button>
+          <button type="submit" className={css.button} disabled>
+            Create Note
+          </button>
+        </div>
+      </form>
+    );
+  }
+
+  // Після монтування - повноцінна форма з даними
+  return <NoteFormContent />;
+}
+
+function NoteFormContent() {
+  const router = useRouter();
+  const { draft, setDraft, clearDraft } = useNoteStore();
   const [title, setTitle] = useState(draft.title);
   const [content, setContent] = useState(draft.content);
   const [tag, setTag] = useState<NoteTag>(draft.tag);
